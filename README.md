@@ -4,8 +4,8 @@
 Rs485通信
 
 ### 使用方法
-* gradle方式
-    - ① 在项目的build.gradle文件中添加如下代码
+* `gradle`方式
+    - ① 在项目的`build.gradle`文件中添加如下代码
     
         ```groovy
         allprojects {
@@ -16,7 +16,7 @@ Rs485通信
         }
         ```
 
-    - ② 在dependency添加
+    - ② 在`dependency`添加
             
         ```groovy 
         dependencies {
@@ -24,8 +24,8 @@ Rs485通信
             }
         ```
         
-* maven方式
-    - ① 在项目的build.gradle文件中添加如下代码
+* `maven`方式
+    - ① 在项目的`build.gradle`文件中添加如下代码
     
         ```xml
         <repositories>
@@ -46,3 +46,8 @@ Rs485通信
         </dependency>
         ```
         
+### 里程
+| 里程 | 版本 | 时间 |
+| ----- | :---- | :-----: |
+| 对其中Protocol__8的协议进行修改 | 0.2.0 | 2016-07-25 
+| 将项目中的Rs485的module进行提取封装,做成第一版 | 0.1.2 | 2016-06-21 ||
