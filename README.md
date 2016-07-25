@@ -20,7 +20,7 @@ Rs485通信
             
         ```groovy 
         dependencies {
-            compile 'com.github.SageTripp:Rs485:0.1.2'
+            compile 'com.github.SageTripp:Rs485:0.2.0'
             }
         ```
         
