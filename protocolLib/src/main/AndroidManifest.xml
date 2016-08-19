@@ -7,7 +7,7 @@
         android:supportsRtl="true"
         >
 
-        <service android:name=".service.USBService"/>
+        <service android:name=".service.OTGService"/>
 
     </application>
 

@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.github.dcendents.android-maven'
+//apply plugin: 'com.github.dcendents.android-maven'
 
 group='com.github.SageTripp'
 
@@ -12,7 +12,11 @@ android {
         minSdkVersion 9
         targetSdkVersion 24
         versionCode 1
-        versionName "0.2.0"
+        versionName "0.3.0"
+        ndk{
+            abiFilters "mips"
+            moduleName "SerialPort"
+        }
     }
     buildTypes {
         release {
@@ -22,6 +26,11 @@ android {
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+    }
+    externalNativeBuild {
+        ndkBuild {
+            path 'src/main/jni/Android.mk'
+        }
     }
 }
 

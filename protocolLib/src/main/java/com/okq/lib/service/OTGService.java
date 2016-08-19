@@ -3,6 +3,7 @@ package com.okq.lib.service;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
 import com.ftdi.j2xx.D2xxManager;
@@ -12,9 +13,9 @@ import com.okq.lib.U;
 /**
  * Created by zst on 2016/3/8. USB后台服务
  */
-public class USBService extends Service {
+public class OTGService extends Service {
 
-    static FT_Device ftDev = null;
+    private static FT_Device ftDev = null;
     /**
      * 设备数目
      */
@@ -28,13 +29,12 @@ public class USBService extends Service {
      */
     private int currentIndex = -1;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-    }
+    private D2xxManager d2xxManager;
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        d2xxManager = intent.getParcelableExtra("d2xx");
         devCount = -1;
         createDeviceList();
         if (devCount > 0) {
@@ -82,7 +82,7 @@ public class USBService extends Service {
      * 生成设备列表
      */
     public void createDeviceList() {
-        int tempDevCount = U.d2xxManager.createDeviceInfoList(this);
+        int tempDevCount = d2xxManager.createDeviceInfoList(this);
 
         if (tempDevCount > 0) {
             if (devCount != tempDevCount) {
@@ -120,10 +120,10 @@ public class USBService extends Service {
     public void connectFunction() {
         if (currentIndex != openIndex) {
             if (null == ftDev) {
-                ftDev = U.d2xxManager.openByIndex(this, openIndex);
+                ftDev = d2xxManager.openByIndex(this, openIndex);
             } else {
                 synchronized (ftDev) {
-                    ftDev = U.d2xxManager.openByIndex(this, openIndex);
+                    ftDev = d2xxManager.openByIndex(this, openIndex);
                 }
             }
         } else {
