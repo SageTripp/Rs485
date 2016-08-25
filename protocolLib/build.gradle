@@ -11,7 +11,7 @@ android {
         minSdkVersion 9
         targetSdkVersion 24
         versionCode 3
-        versionName "0.3.0"
+        versionName "0.3.2"
         ndk{
             abiFilters "mips"
             moduleName "SerialPort"
@@ -37,18 +37,18 @@ dependencies {
     compile files('libs/d2xx.jar')
     compile 'joda-time:joda-time:2.3'
 }
-
-task clearJar(type: Delete) {
-    delete 'build/outputs/protocol.jar'
-}
-
-task makeJar(type: Copy){
-    from('build/intermediates/bundles/release/')
-    into('build/outputs/')
-    include('classes.jar')
-    rename ('classes.jar', 'protocol.jar')
-}
-makeJar.dependsOn(clearJar, build)
+//
+//task clearJar(type: Delete) {
+//    delete 'build/outputs/protocol.jar'
+//}
+//
+//task makeJar(type: Copy){
+//    from('build/intermediates/bundles/release/')
+//    into('build/outputs/')
+//    include('classes.jar')
+//    rename ('classes.jar', 'protocol.jar')
+//}
+//makeJar.dependsOn(clearJar, build)
 buildscript {
     repositories {
         mavenCentral()
