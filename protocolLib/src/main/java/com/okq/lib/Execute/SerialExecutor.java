@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import com.okq.lib.U;
 import com.okq.lib.exception.ProtocolException;
 import com.okq.lib.exception.USBException;
-import com.okq.lib.serial.SerialPort;
+import com.okq.lib.serialPort.SerialPort;
 import com.okq.lib.service.SerialService;
 import com.okq.lib.task.TaskInfo;
 
@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by zst on 2016/3/8. 执行器
  */
+@Deprecated
 public class SerialExecutor extends Executor {
 
     private CountDownLatch end;
@@ -51,6 +52,7 @@ public class SerialExecutor extends Executor {
                         //等待任务结束
                         end.await(TIME_OUT, TimeUnit.MILLISECONDS);
                         end.countDown();
+                        usbTask.interrupt();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -88,6 +90,7 @@ public class SerialExecutor extends Executor {
         @Override
         public void run() {
             String result = "";
+            System.out.println("开始");
             try {
                 begin.await();
                 synchronized (serialPort) {
@@ -95,7 +98,7 @@ public class SerialExecutor extends Executor {
                     boolean isReceive = false;
                     do {
                         Thread.sleep(100);
-                        String hex = serialPort.receiveData("HEX");
+                        String hex = serialPort.receiveData();
                         if (!TextUtils.isEmpty(hex)) {
                             try {
                                 switch (OP) {
@@ -116,8 +119,7 @@ public class SerialExecutor extends Executor {
                             }
                             isReceive = true;
                         }
-
-                    } while (!isReceive && end.getCount() > 0);
+                    } while (!isInterrupted() && !isReceive && end.getCount() > 0);
                 }
 
             } catch (InterruptedException e) {
@@ -127,8 +129,8 @@ public class SerialExecutor extends Executor {
                     info.onFinish(result);
                 }
                 end.countDown();
+                System.out.println("结束");
             }
-
         }
 
         void setTaskInfo(TaskInfo info) {
@@ -145,7 +147,7 @@ public class SerialExecutor extends Executor {
                 return;
             }
 
-            serialPort.sendData(writeData, "HEX");
+            serialPort.sendData(writeData);
             System.out.println("writeData = [" + writeData + "]");
         }
     }

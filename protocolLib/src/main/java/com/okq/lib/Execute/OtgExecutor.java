@@ -130,7 +130,6 @@ public class OtgExecutor extends Executor {
                 }
                 end.countDown();
             }
-
         }
 
         void setTaskInfo(TaskInfo info) {

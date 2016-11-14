@@ -1,59 +1,102 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'//添加bintray插件
 
-group='com.github.SageTripp'
+group = 'com.okq.RS485'
+version = '0.1.0'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.1"
+    compileSdkVersion 25
+    buildToolsVersion "24.0.3"
 
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 3
         versionName "0.3.3"
-        ndk{
-            abiFilters "mips"
-            moduleName "SerialPort"
+        externalNativeBuild {
+            cmake {
+                cppFlags ""
+            }
         }
     }
+
+    externalNativeBuild {
+        cmake {
+            path "CMakeLists.txt"
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    externalNativeBuild {
-        ndkBuild {
-            path 'src/main/jni/Android.mk'
-        }
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
     }
+
+    repositories {
+        mavenCentral()
+    }
+
+    task sourcesJar(type: Jar) {
+        from android.sourceSets.main.java.srcDirs
+        classifier = 'sources'
+    }
+
+    task Javadoc(type: Javadoc) {
+        excludes = ['**/*.kt']
+        source = android.sourceSets.main.java.srcDirs
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    }
+
+//    task javadocJar(type: Jar, dependsOn: Javadoc) {
+//        classifier = 'javadoc'
+//        from Javadoc.destinationDir
+//    }
+
+    artifacts {
+//        archives javadocJar
+        archives sourcesJar
+    }
+}
+
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    pkg {
+        repo = 'maven'
+        name = 'com.okq.RS485'
+
+        version {
+            name = '0.1.0'
+            desc = "用于RS485通信"
+            vcsTag = '0.1.0'
+        }
+
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/SageTripp/Rs485.git'
+        websiteUrl = 'https://github.com/SageTripp/Rs485'
+    }
+
+    configurations = ['archives']
+
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:24.0.0'
+    compile 'com.android.support:appcompat-v7:25.0.0'
     compile files('libs/d2xx.jar')
     compile 'joda-time:joda-time:2.3'
-}
-//
-//task clearJar(type: Delete) {
-//    delete 'build/outputs/protocol.jar'
-//}
-//
-//task makeJar(type: Copy){
-//    from('build/intermediates/bundles/release/')
-//    into('build/outputs/')
-//    include('classes.jar')
-//    rename ('classes.jar', 'protocol.jar')
-//}
-//makeJar.dependsOn(clearJar, build)
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-}
-repositories {
-    mavenCentral()
+    compile files('libs/ksoap2-android3.0.jar')
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }

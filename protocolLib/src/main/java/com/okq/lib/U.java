@@ -9,9 +9,10 @@ import android.os.Parcelable;
 import com.ftdi.j2xx.D2xxManager;
 import com.okq.lib.Execute.Executor;
 import com.okq.lib.Execute.OtgExecutor;
+import com.okq.lib.Execute.SerialExe;
 import com.okq.lib.Execute.SerialExecutor;
 import com.okq.lib.exception.USBException;
-import com.okq.lib.serial.SerialPort;
+import com.okq.lib.serialPort.SerialPort;
 import com.okq.lib.service.OTGService;
 import com.okq.lib.service.SerialService;
 
@@ -28,8 +29,6 @@ public class U {
     public static D2xxManager d2xxManager;
 
     private static int type = 0;
-
-    private static SerialPort serialPort;
 
     private U() {
     }
@@ -56,18 +55,18 @@ public class U {
                     context.startService(intent);
                 }
                 exe = new OtgExecutor();
-                exe.context = context;
                 break;
             case 1:
                 if (!isServiceWork(context, SerialService.class)) {
                     Intent intent = new Intent(context, SerialService.class);
                     context.startService(intent);
                 }
-                exe = new SerialExecutor();
+                exe = new SerialExe();
                 break;
             default:
                 throw new InvalidParameterException("参数[mode]的值只能为 0(OTG) 或 1(RS485) ");
         }
+        exe.context = context;
     }
 
     /**
@@ -82,7 +81,7 @@ public class U {
                 case 0:
                     return new OtgExecutor();
                 case 1:
-                    return new SerialExecutor();
+                    return new SerialExe();
                 default:
                     throw new InvalidParameterException("在 init(context,mode) 方法中输入的 mode值有误");
             }

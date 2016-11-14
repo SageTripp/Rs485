@@ -5,7 +5,11 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.okq.lib.serial.SerialPort;
+import com.okq.lib.serialPort.SerialPort;
+
+import java.io.File;
+import java.io.IOException;
+
 
 /**
  * Created by zst on 2016/3/8. USB后台服务
@@ -16,13 +20,17 @@ public class SerialService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        serialPort = new SerialPort("S0", 9600, 8, 1, 0);
+        try {
+            serialPort = new SerialPort(new File("/dev/ttyS4"), 9600, 0);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
     public void onDestroy() {
-        serialPort.closeSerial();
+        serialPort.close();
         super.onDestroy();
     }
 
